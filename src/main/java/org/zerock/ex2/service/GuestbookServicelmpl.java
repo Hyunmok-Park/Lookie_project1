@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.zerock.ex2.dto.GuestbookDTO;
 import org.zerock.ex2.dto.PageRequestDTO;
 import org.zerock.ex2.dto.PageResultDTO;
@@ -55,5 +56,24 @@ public class GuestbookServicelmpl implements GuestbookService {
     public GuestbookDTO read(Long gno){
         Optional<Guestbook> result = repository.findById(gno);
         return result.isPresent()? entityTODto(result.get()): null;
+    }
+
+    @Override
+    public void remove(Long gno){
+        repository.deleteById(gno);
+    }
+
+    @Override
+    public void modify(GuestbookDTO dto){
+        Optional<Guestbook> result = repository.findById(dto.getGno());
+
+        if(result.isPresent()){
+            Guestbook entity = result.get();
+
+            entity.changeTitle(dto.getTitle());
+            entity.changeContents(dto.getContent());
+
+            repository.save(entity);
+        }
     }
 }
