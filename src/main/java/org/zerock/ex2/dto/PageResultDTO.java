@@ -12,7 +12,7 @@ public class PageResultDTO<DTO, EN> {
 
     private List<DTO> dtoList;
 
-    public PageRequestDTO(Page<EN> result, Function<EN, DTO> fn){
+    public void PageRequestDTO(Page<EN> result, Function<EN, DTO> fn){
         dtoList = result.stream().map(fn).collect(Collectors.toList());
     }
 }
