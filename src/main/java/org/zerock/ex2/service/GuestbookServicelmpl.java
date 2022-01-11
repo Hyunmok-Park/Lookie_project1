@@ -1,5 +1,8 @@
 package org.zerock.ex2.service;
 
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.BooleanExpression;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -7,11 +10,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
+
 import org.zerock.ex2.dto.GuestbookDTO;
 import org.zerock.ex2.dto.PageRequestDTO;
 import org.zerock.ex2.dto.PageResultDTO;
 
 import org.zerock.ex2.entity.Guestbook;
+import org.zerock.ex2.entity.QGuestbook;
 import org.zerock.ex2.repository.GuestbookRepository;
 
 import java.lang.management.OperatingSystemMXBean;
@@ -45,7 +50,10 @@ public class GuestbookServicelmpl implements GuestbookService {
     public PageResultDTO<GuestbookDTO, Guestbook> getList(PageRequestDTO requestDTO){
         Pageable pageable = requestDTO.getPageable(Sort.by("gno").descending());
 
-        Page<Guestbook> result = repository.findAll(pageable);
+        BooleanBuilder booleanBuilder = getSearch(requestDTO);
+
+//        Page<Guestbook> result = repository.findAll(pageable);
+        Page<Guestbook> result = repository.findAll(booleanBuilder, pageable);
 
         Function<Guestbook, GuestbookDTO> fn = (entity -> entityTODto(entity));
 
@@ -76,4 +84,35 @@ public class GuestbookServicelmpl implements GuestbookService {
             repository.save(entity);
         }
     }
+
+    private BooleanBuilder getSearch(PageRequestDTO requestDTO){
+        String type = requestDTO.getType();
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        QGuestbook qGuestbook = QGuestbook.guestbook;
+        String keyword = requestDTO.getKeyword();
+        BooleanExpression expression = qGuestbook.gno.gt(0L);
+        booleanBuilder.and(expression);
+
+        if(type == null || type.trim().length() ==0){
+            return booleanBuilder;
+        }
+
+        BooleanBuilder conditionBuilder = new BooleanBuilder();
+
+        if(type.contains("t")){
+            conditionBuilder.or(qGuestbook.title.contains(keyword));
+        }
+        if(type.contains("c")){
+            conditionBuilder.or(qGuestbook.content.contains(keyword));
+        }
+        if(type.contains("w")){
+            conditionBuilder.or(qGuestbook.writer.contains(keyword));
+        }
+
+        booleanBuilder.and(conditionBuilder);
+
+        return booleanBuilder;
+    }
+
+
 }

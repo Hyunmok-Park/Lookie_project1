@@ -7,6 +7,8 @@
         <h1 class="mt-4">GuestBook Modify Page</h1>
         <form action="/guestbook/modify" method="post">
             <input type="hidden" name="page" th:value="${requestDTO.page}">
+            <input type="hidden" name="type" th:value="${requestDTO.type}">
+            <input type="hidden" name="keyword" th:value="${requestDTO.keyword}">
 
         <div class="form-group">
             <label>Gno</label>
@@ -15,12 +17,12 @@
 
         <div class="form-group">
             <label>Title</label>
-            <input type="text" class="form-control" name="title" th:value="${dto.title}" readonly>
+            <input type="text" class="form-control" name="title" th:value="${dto.title}">
         </div>
 
         <div class="form-group">
             <label>Content</label>
-            <textarea class="form-control" rows="5" name="content" readonly>[[${dto.content}]]</textarea>
+            <textarea class="form-control" rows="5" name="content">[[${dto.content}]]</textarea>
         </div>
 
         <div class="form-group">
@@ -30,12 +32,12 @@
 
         <div class="form-group">
             <label>RegDate</label>
-            <input type="text" class="form-control" name="regDate" th:value="${#temporals.format(dto.regDate, 'yyyy/MM/dd HH:mm:ss')}" readonly>
+            <input type="text" class="form-control" th:value="${#temporals.format(dto.regDate, 'yyyy/MM/dd HH:mm:ss')}" readonly>
         </div>
 
         <div class="form-group">
             <label>ModDate</label>
-            <input type="text" class="form-control" name="modDate" th:value="${#temporals.format(dto.modDate, 'yyyy/MM/dd HH:mm:ss')}" readonly>
+            <input type="text" class="form-control" th:value="${#temporals.format(dto.modDate, 'yyyy/MM/dd HH:mm:ss')}" readonly>
         </div>
         </form>
 
@@ -50,18 +52,19 @@
 <!--        <a th:href="@{/guestbook/list(page=${requestDTO.page})}">-->
 <!--            <button type="button" class="btn btn-info">List</button>-->
 <!--        </a>-->
+
         <script th:inline="javascript">
             var actionForm=$("form");
-            $(".removeBtn".click(function(){
+            $(".removeBtn").click(function(){
                 actionForm
-                    .attr("action", "/guest/remove")
+                    .attr("action", "/guestbook/remove")
                     .attr("method", "post");
                 actionForm.submit();
             });
 
-            $(".modifyBtn".click(fuction() {
+            $(".modifyBtn").click(function() {
                 if(!confirm("수정하시겠습니까?")){
-                    return ;
+                    return;
                 }
 
                 actionForm
@@ -70,11 +73,17 @@
                     .submit();
             });
 
-            $(".listBtn".click(fuction() {
-                var pageInfo = $("input[name='page']");
-                
+            $(".listBtn").click(function() {
+                var page = $("input[name='page']");
+                var type = $("input[name='type']");
+                var keyword = $("input[name='keyword']");
+
                 actionForm.empty();
-                actionForm.append(pageInfo);
+
+                actionForm.append(page);
+                actionForm.append(type);
+                actionForm.append(keyword);
+
                 actionForm
                     .attr("action", "/guestbook/list")
                     .attr("method", "get");
@@ -82,4 +91,5 @@
                 actionForm.submit();
             });
         </script>
+
     </th:block>
