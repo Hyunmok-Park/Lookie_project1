@@ -34,6 +34,19 @@ class GuestbookRepositoryTest {
     }
 
     @Test
+    public void updateTest(){
+        Optional<Guestbook> result = guestbookRepository.findById(300L);
+
+        if(result.isPresent()){
+            Guestbook guestbook = result.get();
+            guestbook.changeTitle("Changed Title");
+            guestbook.changeContents("Changed Content");
+
+            guestbookRepository.save(guestbook);
+        }
+    }
+
+    @Test
     public void testQuery1(){
         Pageable pageable = PageRequest.of(0,10,Sort.by("gno").descending());
 

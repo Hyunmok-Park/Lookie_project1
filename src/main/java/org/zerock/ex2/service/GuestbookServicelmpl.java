@@ -33,7 +33,9 @@ public class GuestbookServicelmpl implements GuestbookService {
 
         log.info(entity);
 
-        return null;
+        repository.save(entity);
+
+        return entity.getGno();
     }
 
     @Override
