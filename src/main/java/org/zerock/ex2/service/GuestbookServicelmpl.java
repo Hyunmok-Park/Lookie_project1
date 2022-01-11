@@ -13,6 +13,8 @@ import org.zerock.ex2.dto.PageResultDTO;
 import org.zerock.ex2.entity.Guestbook;
 import org.zerock.ex2.repository.GuestbookRepository;
 
+import java.lang.management.OperatingSystemMXBean;
+import java.util.Optional;
 import java.util.function.Function;
 
 @Service
@@ -47,5 +49,11 @@ public class GuestbookServicelmpl implements GuestbookService {
         Function<Guestbook, GuestbookDTO> fn = (entity -> entityTODto(entity));
 
         return new PageResultDTO<>(result, fn);
+    }
+
+    @Override
+    public GuestbookDTO read(Long gno){
+        Optional<Guestbook> result = repository.findById(gno);
+        return result.isPresent()? entityTODto(result.get()): null;
     }
 }
