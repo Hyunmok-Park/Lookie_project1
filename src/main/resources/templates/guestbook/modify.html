@@ -54,7 +54,9 @@
 <!--        </a>-->
 
         <script th:inline="javascript">
+
             var actionForm=$("form");
+
             $(".removeBtn").click(function(){
                 actionForm
                     .attr("action", "/guestbook/remove")
